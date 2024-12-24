@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 
-const dbURI =
-  "mongodb+srv://admin:admin@mlm.yldup.mongodb.net/?retryWrites=true&w=majority&appName=mlm";
+const dbURI = process.env.MONGO_URI;
 const connectDB = async () => {
   try {
     await mongoose.connect(dbURI);
