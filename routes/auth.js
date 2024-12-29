@@ -30,6 +30,7 @@ router.post("/sign-in", async (req, res) => {
       password,
       referralCode: newReferralCode,
       referredBy: referralCode || null,
+      cashback: 100,
     });
     const response = await newUser.save();
     if (referralCode) {
@@ -40,7 +41,7 @@ router.post("/sign-in", async (req, res) => {
         // Add the new referral to the successfulReferrals array
         referralCodeUser.successfulReferrals.push({
           referredUserEmail: email,
-          cashback: 0,
+          cashback: 100,
           referredUserName: fullName,
         });
 
@@ -59,6 +60,25 @@ router.post("/sign-in", async (req, res) => {
     });
   } catch (err) {
     res.status(401).json({ message: err.message });
+  }
+});
+
+router.post("/userProfile", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const profile = await authSchema.find({ email });
+    res
+      .status(200) // Changed to 200 for successful fetching, 201 is typically used for resource creation.
+      .json({
+        message: "User profile fetched successfully",
+        data: profile,
+      });
+  } catch (err) {
+    console.error("Error in userProfile:", err.message); // Updated for better readability
+    res
+      .status(500)
+      .json({ message: "Error fetching user profile", error: err.message });
   }
 });
 

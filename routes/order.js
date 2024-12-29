@@ -4,7 +4,7 @@ const Item = require("../models/Item");
 const User = require("../models/Auth");
 const Order = require("../models/Order");
 router.post("/placeOrder", async (req, res) => {
-  const { items, userEmail } = req.body;
+  const { items, userEmail, address } = req.body;
 
   // Validate request
   if (!items || !Array.isArray(items) || items.length === 0) {
@@ -46,6 +46,7 @@ router.post("/placeOrder", async (req, res) => {
       items,
       totalAmount,
       userEmail: userEmail,
+      address,
     });
 
     // Save the order to the database
@@ -96,6 +97,18 @@ router.post("/placeOrder", async (req, res) => {
       .json({ message: "Order placed successfully!", data: savedOrder });
   } catch (error) {
     res.status(500).json({ error: "Failed to place order.", details: error });
+  }
+});
+
+router.post("/orderHistory", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const orders = await Order.find({ email });
+    res
+      .status(201)
+      .json({ message: "Order fetched successfully", data: orders });
+  } catch (err) {
+    console.log("err in orderHistory", err.message);
   }
 });
 
